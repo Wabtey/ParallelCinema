@@ -10,5 +10,6 @@ public class Customer extends Thread {
 
     @Override
     public void run() {
+        this.room.stand();
     }
 }
