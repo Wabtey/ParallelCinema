@@ -5,6 +5,7 @@ import java.util.Map;
 
 public class Room {
     enum RoomState {
+        CLOSED,
         OPEN,
         // INCLUDING THE CREDITS
         PROJECTING,
@@ -17,7 +18,7 @@ public class Room {
     int index;
     Map<Integer, Boolean> seats = new HashMap<>();
 
-    RoomState state = RoomState.OPEN;
+    RoomState state = RoomState.CLOSED;
 
     public Room(int index) {
         this.index = index;
