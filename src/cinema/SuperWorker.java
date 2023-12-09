@@ -6,6 +6,12 @@ public class SuperWorker extends Thread {
 
     float salary = Cinema.AVERAGE_SALARY;
 
+    Room[] rooms;
+
+    public SuperWorker(Room[] rooms) {
+        this.rooms = rooms;
+    }
+
     @Override
     public void run() {
         while (true) {
