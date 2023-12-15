@@ -46,6 +46,9 @@ public class Cinema {
             }
         }
 
+        for (int i = 0; i < NB_ROOMS; i++)
+            System.out.println(this.rooms[i].toString());
+
         // There is no more customers at the cinema.
         // The employee being a Daemon, will stop itself being the only one left.
         System.out.println("The employee is calling it a day");
@@ -60,9 +63,6 @@ public class Cinema {
         long start = System.currentTimeMillis();
 
         Cinema cinema = new Cinema(animation);
-
-        for (int i = 0; i < NB_ROOMS; i++)
-            System.out.println(cinema.rooms[i].toString());
 
         long finish = System.currentTimeMillis();
         float timeElapsed = finish - start;
