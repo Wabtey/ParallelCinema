@@ -1,6 +1,7 @@
 package cinema;
 
 import java.util.Optional;
+import java.util.logging.Logger;
 
 import tools.Pair;
 
@@ -86,24 +87,46 @@ public class Room {
 
     /* ---------------------------- Customers Methods --------------------------- */
 
-    public synchronized Optional<Pair<Integer, Integer>> stand(Customer stander) {
+    public synchronized Pair<Integer, Integer> stand(Customer stander) {
         Optional<Pair<Integer, Integer>> potentialFreeSeat = Optional.empty();
-
-        // get the first free seat
-        for (int row = 0; row < seatMap.length; row++) {
-            for (int column = 0; column < seatMap[row].length; column++) {
-                if (seatMap[row][column] == null) {
-                    seatMap[row][column] = stander;
-                    potentialFreeSeat = Optional.of(new Pair<Integer, Integer>(row, column));
-                    break;
+        while (potentialFreeSeat.isEmpty()) {
+            while (this.getRoomState() != RoomState.OPEN) {
+                try {
+                    stander.wait();
+                } catch (InterruptedException e) {
+                    Logger.getGlobal()
+                            .warning(stander.getName() + " got interruped in their sleep.\n" + e.toString());
                 }
             }
-            if (potentialFreeSeat.isPresent())
-                break;
-        }
 
-        System.out.println(toString() + cleanString());
-        return potentialFreeSeat;
+            // get the first free seat
+            for (int row = 0; row < this.seatMap.length; row++) {
+                for (int column = 0; column < this.seatMap[row].length; column++) {
+                    if (this.seatMap[row][column] == null) {
+                        this.seatMap[row][column] = stander;
+                        potentialFreeSeat = Optional.of(new Pair<Integer, Integer>(row, column));
+                        break;
+                    }
+                }
+                if (potentialFreeSeat.isPresent())
+                    break;
+            }
+
+            System.out.println(toString() + cleanString());
+        }
+        return potentialFreeSeat.get();
+    }
+
+    public synchronized void freeSeat(Customer customer, Pair<Integer, Integer> seat) {
+        while (this.getRoomState() != RoomState.EXITING) {
+            try {
+                customer.wait();
+            } catch (InterruptedException e) {
+                Logger.getGlobal()
+                        .warning(customer.getName() + " got interruped in their sleep.\n" + e.toString());
+            }
+        }
+        this.seatMap[seat.getLeft()][seat.getRight()] = null;
     }
 
     /* ------------------------- Super Employee Methods ------------------------- */

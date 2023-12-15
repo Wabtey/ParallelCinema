@@ -8,7 +8,7 @@ import tools.Pair;
 public class Customer extends Thread {
 
     Room room;
-    Optional<Pair<Integer, Integer>> potentialSeat;
+    Optional<Pair<Integer, Integer>> potentialSeat = Optional.empty();
     Boolean movieSeen = false;
 
     public Customer(Room room) {
@@ -17,18 +17,17 @@ public class Customer extends Thread {
 
     @Override
     public void run() {
-        while (Boolean.TRUE.equals(movieSeen)) {
-            while (this.potentialSeat.isEmpty() && room.getRoomState() == RoomState.OPEN)
-                this.potentialSeat = this.room.stand(this);
-            while (room.getRoomState() == RoomState.PROJECTING) {
-            }
-            while (this.potentialSeat.isPresent() && room.getRoomState() == RoomState.EXITING) {
-                this.room.freeSeat(this);
-                this.potentialSeat = Optional.empty();
-                this.movieSeen = true;
-            }
-            while (room.getRoomState() == RoomState.CLEANING) {
-            }
-        }
+        this.room.reserveTicket();
+        // If no ticket get back home
+        /* ------------------------ Waiting the room to open ------------------------ */
+
+        this.potentialSeat = Optional.of(this.room.stand(this));
+
+        /* ------------------------ Waiting the flim to start ----------------------- */
+        /* -------------------- Waiting the flim to finish Sadge -------------------- */
+
+        this.room.freeSeat(this, potentialSeat.get());
+        this.potentialSeat = Optional.empty();
+        this.movieSeen = true;
     }
 }
