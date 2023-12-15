@@ -96,6 +96,35 @@ I put `nextRoomState()` on `synchronized` to ensure that everyone has the good r
     the `SuperWorker` will be put to sleep and should be woken by the departure of the last client.
     We can limit the complexity by a simple combination `if` / `notify`, as the only one waiting will be the super-worker.
 
+    ```java
+    public synchronized void freeSeat(Customer customer, Pair<Integer, Integer> seat) {
+        // ...
+
+        // if last make sure to wake the super worker :)
+        if (this.isRoomEmpty())
+            notify();
+
+        // ...
+    }
+
+    /* ------------------------- Super Employee Methods ------------------------- */
+
+    public synchronized void clean(SuperWorker superWorker) {
+        // as all the customers left, the only one waiting is the super-worker
+        if (!this.isRoomEmpty()) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                Logger.getGlobal()
+                        .warning("Super Worker got interruped in their sleep (waiting for cleaing).\n" + e.toString());
+                superWorker.interrupt();
+            }
+        }
+    }// In `Room.java`
+    ```
+
+All the other problems were conception or bad implementation problems.
+
 ## Notes
 
 We also checked that the code was free of deadlocks after removing the simulation sleep (when the clients moved around the cinema).

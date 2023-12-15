@@ -196,7 +196,7 @@ public class Room {
             }
         }
 
-        // TODO: render - instead of a simple 2s sleep, explores rows and take a bit of
+        // TODO: render - instead of a simple 1s sleep, explores rows and take a bit of
         // time of each trash to be removed.
     }
 
