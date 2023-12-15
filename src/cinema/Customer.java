@@ -4,11 +4,13 @@ import tools.Pair;
 
 public class Customer extends Thread {
 
+    private String name;
     private BoxOffice boxOffice;
     private Room room;
     // private boolean movieSeen = false;
 
-    public Customer(BoxOffice boxOffice, Room room) {
+    public Customer(int index, BoxOffice boxOffice, Room room) {
+        this.name = "Customer " + index;
         this.boxOffice = boxOffice;
         this.room = room;
     }
@@ -38,5 +40,6 @@ public class Customer extends Thread {
         }
 
         // go back home.
+        // System.out.println(name + " is back home");
     }
 }

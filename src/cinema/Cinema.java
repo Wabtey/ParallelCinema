@@ -8,17 +8,17 @@ public class Cinema {
     public static final float AVERAGE_SALARY = 2000;
 
     public static final int NB_ROOMS = 1;
-    static final int NB_CUSTOMERS = 200;
+    static final int NB_CUSTOMERS = 250;
 
     private BoxOffice boxOffice = new BoxOffice();
     private Room[] rooms = new Room[NB_ROOMS];
     private Customer[] customers = new Customer[NB_CUSTOMERS];
     private SuperWorker superWorker;
 
-    Cinema() {
+    Cinema(boolean animation) {
         // --- Rooms ---
         for (int i = 0; i < NB_ROOMS; i++)
-            rooms[i] = new Room(i);
+            rooms[i] = new Room(i, animation);
 
         // --- Customers ---
         Random r = new Random();
@@ -26,7 +26,7 @@ public class Cinema {
             // NOTE: we could put them the film idea and and the superWorker tells them
             // where to go
             int roomChoosen = r.nextInt(NB_ROOMS);
-            customers[i] = new Customer(boxOffice, rooms[roomChoosen]);
+            customers[i] = new Customer(i, boxOffice, rooms[roomChoosen]);
             customers[i].start();
         }
 
@@ -55,9 +55,11 @@ public class Cinema {
     }
 
     public static void main(String[] args) {
+
+        boolean animation = args != null && args.length > 0 && args[0] != null && args[0].equals("animation");
         long start = System.currentTimeMillis();
 
-        Cinema cinema = new Cinema();
+        Cinema cinema = new Cinema(animation);
 
         for (int i = 0; i < NB_ROOMS; i++)
             System.out.println(cinema.rooms[i].toString());
