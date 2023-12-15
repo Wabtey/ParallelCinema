@@ -1,16 +1,12 @@
 package cinema;
 
-import java.util.Optional;
-
 import tools.Pair;
 
 public class Customer extends Thread {
 
-    BoxOffice boxOffice;
-    Room room;
-    Boolean hasTicket;
-    Optional<Pair<Integer, Integer>> potentialSeat = Optional.empty();
-    Boolean movieSeen = false;
+    private BoxOffice boxOffice;
+    private Room room;
+    // private Boolean movieSeen = false;
 
     public Customer(BoxOffice boxOffice, Room room) {
         this.boxOffice = boxOffice;
@@ -19,7 +15,8 @@ public class Customer extends Thread {
 
     @Override
     public void run() {
-        this.hasTicket = this.boxOffice.bookTicket();
+        Pair<Integer, Integer> seat;
+        Boolean hasTicket = this.boxOffice.bookTicket();
 
         // if (Boolean.FALSE.equals(this.hasTicket)) {
         // // If no ticket get back home
@@ -27,17 +24,16 @@ public class Customer extends Thread {
         // // return;
         // }
 
-        if (Boolean.TRUE.equals(this.hasTicket)) {
+        if (Boolean.TRUE.equals(hasTicket)) {
             /* ------------------------ Waiting the room to open ------------------------ */
 
-            this.potentialSeat = Optional.of(this.room.stand(this));
+            seat = this.room.stand(this);
 
             /* ------------------------ Waiting the flim to start ----------------------- */
             /* -------------------- Waiting the flim to finish Sadge -------------------- */
 
-            this.room.freeSeat(this, potentialSeat.get());
-            this.potentialSeat = Optional.empty();
-            this.movieSeen = true;
+            this.room.freeSeat(this, seat);
+            // this.movieSeen = true;
 
         }
 

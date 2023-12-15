@@ -11,7 +11,7 @@ public class Cinema {
     static final int NB_CUSTOMERS = 200;
 
     private BoxOffice boxOffice = new BoxOffice();
-    private static Room[] rooms = new Room[NB_ROOMS];
+    private Room[] rooms = new Room[NB_ROOMS];
     private Customer[] customers = new Customer[NB_CUSTOMERS];
     private SuperWorker superWorker;
 
@@ -57,10 +57,10 @@ public class Cinema {
     public static void main(String[] args) {
         long start = System.currentTimeMillis();
 
-        new Cinema();
+        Cinema cinema = new Cinema();
 
         for (int i = 0; i < NB_ROOMS; i++)
-            System.out.println(rooms[i].toString());
+            System.out.println(cinema.rooms[i].toString());
 
         long finish = System.currentTimeMillis();
         float timeElapsed = finish - start;

@@ -214,13 +214,12 @@ public class Room {
 
         int aisle = 0;
         for (int j = 0; j < this.nSeatsPerRow; j++) {
-            if (aisle < this.nAisles - 1) {
-                if (this.aisleSeat[aisle] == j && this.aisleSeat[aisle + 1] == j + 1) {
-                    for (int k = 0; k < this.nRows; k++)
-                        print.append("--");
-                    print.append("-\n");
-                    aisle = aisle + 2;
-                }
+            if (aisle < this.nAisles - 1 && (this.aisleSeat[aisle] == j && this.aisleSeat[aisle + 1] == j + 1)) {
+                for (int k = 0; k < this.nRows; k++)
+                    print.append("--");
+                print.append("-\n");
+                aisle = aisle + 2;
+
             }
 
             for (int i = 0; i < this.nRows; i++) {
