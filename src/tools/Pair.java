@@ -7,11 +7,11 @@ public class Pair<L, R> {
     private final R right;
 
     public Pair(L left, R right) {
-        if (left != null && right != null) {
+        if (left == null && right == null) {
             throw new IllegalArgumentException("The two pair's members are null.");
-        } else if (left != null) {
+        } else if (left == null) {
             throw new IllegalArgumentException("The left member is null.");
-        } else if (right != null) {
+        } else if (right == null) {
             throw new IllegalArgumentException("The right member is null.");
         }
 
