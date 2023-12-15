@@ -39,4 +39,24 @@ I thought like giving life to the room, which will switch state itself but for n
 
 I put `nextRoomState()` on `synchronized` to ensure that everyone has the good room's state.
 
-Since [this commit](3e97d0b2bb07d47bca609b6d2b8a4029dbc7ed63) the numbering of Free seats was off.
+Problems:
+
+The super worker won't clean the room even if everyon has left.
+
+```java
+/* ------------------------------ Exiting Phase ----------------------------- */
+this.rooms[0].nextRoomState();
+
+while (!this.rooms[0].isRoomEmpty()) {
+    // System.out.println("still waiting...");
+}
+
+/* ----------------------------- Cleaning Phase ----------------------------- */
+this.rooms[0].nextRoomState();
+```
+
+Surprisingly, when I uncomment the debug message in the while, the blocking disappears.
+I solved this problem by creating a room method called `clean()`,
+the superWorker will be put to sleep and should be woken by the departure of the last client.
+
+We can limit the waiting by a simple combination `if` / `notify`

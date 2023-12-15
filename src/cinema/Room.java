@@ -159,11 +159,27 @@ public class Room {
         this.seatMap[seat.getLeft()][seat.getRight()] = null;
         nFreeSeats++;
 
+        // if last make sure to wake the super worker :)
+        if (this.isRoomEmpty())
+            notify();
+
         if (this.animation)
             System.out.println(toString() + cleanString());
     }
 
     /* ------------------------- Super Employee Methods ------------------------- */
+
+    public synchronized void clean(SuperWorker superWorker) {
+        if (!this.isRoomEmpty()) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                Logger.getGlobal()
+                        .warning("Super Worker got interruped in their sleep (waiting for cleaing).\n" + e.toString());
+                superWorker.interrupt();
+            }
+        }
+    }
 
     public synchronized void nextRoomState() {
         switch (state) {

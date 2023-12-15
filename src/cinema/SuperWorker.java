@@ -42,11 +42,10 @@ public class SuperWorker extends Thread {
                 Thread.currentThread().interrupt();
             }
 
-            /* ------------------------ Stop the flim projection ------------------------ */
+            /* ------------------------------ Exiting Phase ----------------------------- */
             this.rooms[0].nextRoomState();
 
-            while (!this.rooms[0].isRoomEmpty()) {
-            }
+            this.rooms[0].clean(this);
 
             /* ----------------------------- Cleaning Phase ----------------------------- */
             this.rooms[0].nextRoomState();
