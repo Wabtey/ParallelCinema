@@ -1,7 +1,9 @@
 package cinema;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Optional;
+import java.util.logging.Logger;
+
+import tools.Pair;
 
 /**
  * To display/represent the seats, I mostly use the code of `Aircraft` in the
@@ -85,11 +87,46 @@ public class Room {
 
     /* ---------------------------- Customers Methods --------------------------- */
 
-    // TODO: render - find a way to display all rooms
-    public synchronized void stand() {
-        // get the first free seat
+    public synchronized Pair<Integer, Integer> stand(Customer stander) {
+        Optional<Pair<Integer, Integer>> potentialFreeSeat = Optional.empty();
+        while (potentialFreeSeat.isEmpty()) {
+            while (this.getRoomState() != RoomState.OPEN) {
+                try {
+                    stander.wait();
+                } catch (InterruptedException e) {
+                    Logger.getGlobal()
+                            .warning(stander.getName() + " got interruped in their sleep.\n" + e.toString());
+                }
+            }
 
-        System.out.println(toString() + cleanString());
+            // get the first free seat
+            for (int row = 0; row < this.seatMap.length; row++) {
+                for (int column = 0; column < this.seatMap[row].length; column++) {
+                    if (this.seatMap[row][column] == null) {
+                        this.seatMap[row][column] = stander;
+                        potentialFreeSeat = Optional.of(new Pair<Integer, Integer>(row, column));
+                        break;
+                    }
+                }
+                if (potentialFreeSeat.isPresent())
+                    break;
+            }
+
+            System.out.println(toString() + cleanString());
+        }
+        return potentialFreeSeat.get();
+    }
+
+    public synchronized void freeSeat(Customer customer, Pair<Integer, Integer> seat) {
+        while (this.getRoomState() != RoomState.EXITING) {
+            try {
+                customer.wait();
+            } catch (InterruptedException e) {
+                Logger.getGlobal()
+                        .warning(customer.getName() + " got interruped in their sleep.\n" + e.toString());
+            }
+        }
+        this.seatMap[seat.getLeft()][seat.getRight()] = null;
     }
 
     /* ------------------------- Super Employee Methods ------------------------- */

@@ -8,7 +8,7 @@ public class Cinema {
     public static final float AVERAGE_SALARY = 2000;
 
     public static final int NB_ROOMS = 1;
-    static final int NB_CUSTOMERS = 50;
+    static final int NB_CUSTOMERS = 200;
 
     private static Room[] rooms = new Room[NB_ROOMS];
     private Customer[] customers = new Customer[NB_CUSTOMERS];
