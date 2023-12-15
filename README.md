@@ -4,7 +4,7 @@
 
 ## Author
 
-Florence EPAIN
+Florence EPAIN - [github repository](https://github.com/Wabtey/ParallelCinema)
 
 ## Inspiration
 
