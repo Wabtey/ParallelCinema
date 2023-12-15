@@ -1,3 +1,7 @@
 # Parallel Cinema
 
-Simulation of a cinema.
+(real Realist) Simulation of a cinema.
+
+## Author
+
+Florence EPAIN

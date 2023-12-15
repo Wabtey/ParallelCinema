@@ -7,25 +7,26 @@ public class Cinema {
 
     public static final float AVERAGE_SALARY = 2000;
 
-    public static final int NB_ROOMS = 1;
-    static final int NB_CUSTOMERS = 400;
-
-    private BoxOffice boxOffice = new BoxOffice();
-    private Room[] rooms = new Room[NB_ROOMS];
-    private Customer[] customers = new Customer[NB_CUSTOMERS];
+    private BoxOffice boxOffice;
+    private Room[] rooms;
+    private Customer[] customers;
     private SuperWorker superWorker;
 
-    Cinema(boolean animation) {
+    Cinema(int nbRooms, int nbTickets, int nbCustomers, boolean animation) {
+        this.rooms = new Room[nbRooms];
+        this.boxOffice = new BoxOffice(nbTickets);
+        this.customers = new Customer[nbCustomers];
+
         // --- Rooms ---
-        for (int i = 0; i < NB_ROOMS; i++)
+        for (int i = 0; i < nbRooms; i++)
             rooms[i] = new Room(i, animation);
 
         // --- Customers ---
         Random r = new Random();
-        for (int i = 0; i < NB_CUSTOMERS; i++) {
+        for (int i = 0; i < nbCustomers; i++) {
             // NOTE: we could put them the film idea and and the superWorker tells them
             // where to go
-            int roomChoosen = r.nextInt(NB_ROOMS);
+            int roomChoosen = r.nextInt(nbRooms);
             customers[i] = new Customer(i, boxOffice, rooms[roomChoosen]);
             customers[i].start();
         }
@@ -35,7 +36,7 @@ public class Cinema {
         superWorker.setDaemon(true);
         superWorker.start();
 
-        for (int i = 0; i < NB_CUSTOMERS; i++) {
+        for (int i = 0; i < nbCustomers; i++) {
             // eww... this loop will freeze on the first iteration
             try {
                 customers[i].join();
@@ -46,11 +47,11 @@ public class Cinema {
             }
         }
 
-        for (int i = 0; i < NB_ROOMS; i++)
+        for (int i = 0; i < nbRooms; i++)
             System.out.println(this.rooms[i].toString());
 
-        long unhappyCustomers = NB_CUSTOMERS < BoxOffice.MAX_TICKETS ? 0 : NB_CUSTOMERS - BoxOffice.MAX_TICKETS;
-        System.out.println("Tickets left: " + boxOffice.getTicketNumber() + "/" + BoxOffice.MAX_TICKETS
+        long unhappyCustomers = nbCustomers < nbTickets ? 0 : nbCustomers - nbTickets;
+        System.out.println("Tickets left: " + boxOffice.getTicketNumber() + "/" + nbTickets
                 + ". Unhappy customers: " + unhappyCustomers);
 
         // There is no more customers at the cinema.
@@ -66,7 +67,7 @@ public class Cinema {
         boolean animation = args != null && args.length > 0 && args[0] != null && args[0].equals("animation");
         long start = System.currentTimeMillis();
 
-        new Cinema(animation);
+        new Cinema(1, 350, 400, animation);
 
         long finish = System.currentTimeMillis();
         float timeElapsed = finish - start;

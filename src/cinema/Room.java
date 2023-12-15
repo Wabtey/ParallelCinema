@@ -21,7 +21,7 @@ public class Room {
 
     int index;
 
-    private int NB_SEATS = 150;
+    private int nbSeats;
     private int nRows;
     private int nSeatsPerRow;
     private int nAisles;
@@ -74,8 +74,8 @@ public class Room {
             }
 
             // initializating counter of free seats
-            this.NB_SEATS = nRows * nSeatsPerRow;
-            this.nFreeSeats = NB_SEATS;
+            this.nbSeats = nRows * nSeatsPerRow;
+            this.nFreeSeats = this.nbSeats;
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
@@ -257,7 +257,7 @@ public class Room {
     }
 
     public boolean isRoomEmpty() {
-        return this.nFreeSeats == this.NB_SEATS;
+        return this.nFreeSeats == this.nbSeats;
     }
 
     /* ------------------------------ Display Room ------------------------------ */
@@ -275,13 +275,11 @@ public class Room {
         return print.toString();
     }
 
-    /**
-     * Printing
-     */
+    /** Printing */
     public String toString() {
         StringBuilder print = new StringBuilder();
 
-        // Same length State visualizer
+        // Same length State visualizer (10 being PROJECTING's length)
         StringBuilder stateFormated = new StringBuilder().append(this.getRoomState().toString());
         for (int i = this.getRoomState().toString().length() - 10; i < 10; i++)
             stateFormated.append(" ");
@@ -296,7 +294,7 @@ public class Room {
         nFreeSeatsFormated.append(this.getNumberOfFreeSeats());
 
         print.append("Room " + this.index + ": " + stateFormated.toString() + ", "
-                + nFreeSeatsFormated + "/" + this.NB_SEATS + "\n");
+                + nFreeSeatsFormated + "/" + this.nbSeats + "\n");
         // print.append("Number of free seats: " + this.nFreeSeats + "\n");
 
         for (int i = 0; i < this.nRows; i++) {

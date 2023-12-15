@@ -2,8 +2,13 @@ package cinema;
 
 public class BoxOffice {
 
-    static final int MAX_TICKETS = 350;
-    private Integer ticketNumber = MAX_TICKETS;
+    private int ticketsTotal;
+    private Integer ticketNumber;
+
+    public BoxOffice(int ticketsTotal) {
+        this.ticketsTotal = ticketsTotal;
+        this.ticketNumber = this.ticketsTotal;
+    }
 
     public synchronized boolean bookTicket() {
         if (this.ticketNumber != 0) {
