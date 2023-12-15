@@ -143,6 +143,12 @@ public class Room {
         return potentialFreeSeat.get();
     }
 
+    /**
+     * TODO: render - represent rubbish dumped by filthy customers
+     * 
+     * @param customer
+     * @param seat
+     */
     public synchronized void freeSeat(Customer customer, Pair<Integer, Integer> seat) {
         while (this.getRoomState() != RoomState.EXITING) {
             try {
@@ -175,6 +181,9 @@ public class Room {
 
     /* ------------------------- Super Employee Methods ------------------------- */
 
+    /**
+     * @param superWorker
+     */
     public synchronized void clean(SuperWorker superWorker) {
         // as all the customers left, the only one waiting is the super-worker
         if (!this.isRoomEmpty()) {
@@ -186,6 +195,9 @@ public class Room {
                 superWorker.interrupt();
             }
         }
+
+        // TODO: render - instead of a simple 2s sleep, explores rows and take a bit of
+        // time of each trash to be removed.
     }
 
     public synchronized void nextRoomState() {
