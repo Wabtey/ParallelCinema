@@ -6,7 +6,7 @@ public class Customer extends Thread {
 
     private BoxOffice boxOffice;
     private Room room;
-    // private Boolean movieSeen = false;
+    // private boolean movieSeen = false;
 
     public Customer(BoxOffice boxOffice, Room room) {
         this.boxOffice = boxOffice;
@@ -16,15 +16,15 @@ public class Customer extends Thread {
     @Override
     public void run() {
         Pair<Integer, Integer> seat;
-        Boolean hasTicket = this.boxOffice.bookTicket();
+        boolean hasTicket = this.boxOffice.bookTicket();
 
-        // if (Boolean.FALSE.equals(this.hasTicket)) {
+        // if (boolean.FALSE.equals(this.hasTicket)) {
         // // If no ticket get back home
         // this.interrupt();
         // // return;
         // }
 
-        if (Boolean.TRUE.equals(hasTicket)) {
+        if (hasTicket) {
             /* ------------------------ Waiting the room to open ------------------------ */
 
             seat = this.room.stand(this);
