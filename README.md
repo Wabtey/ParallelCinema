@@ -5,3 +5,7 @@
 ## Author
 
 Florence EPAIN
+
+## Inspiration
+
+Lab session [`AirSimulation`](https://github.com/Wabtey/AirSimulation) by Cedric Tedeschi.
