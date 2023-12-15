@@ -185,11 +185,10 @@ public class Room {
                 break;
         }
 
-        notifyAll();
-
         if (this.animation)
             System.out.println(toString() + cleanString());
 
+        notifyAll();
         // this.state = this.state + 1 >= RoomState.values().length ?
         // RoomState.values()[0] : this.state.ordinal + 1;
     }
@@ -234,7 +233,7 @@ public class Room {
     }
 
     public boolean isRoomEmpty() {
-        return this.nFreeSeats == 0;
+        return this.nFreeSeats == Room.NB_SEATS;
     }
 
     /* ------------------------------ Display Room ------------------------------ */
