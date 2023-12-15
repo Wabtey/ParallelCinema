@@ -133,10 +133,11 @@ public class Room {
 
     /* ------------------------- Super Employee Methods ------------------------- */
 
-    /* ---------------------------- Room Own Methods ---------------------------- */
-
-    public void nextRoomState() {
+    public synchronized void nextRoomState() {
         switch (state) {
+            case RoomState.CLOSED:
+                this.state = RoomState.OPEN;
+                break;
             case RoomState.OPEN:
                 this.state = RoomState.PROJECTING;
                 break;
@@ -152,9 +153,13 @@ public class Room {
             default:
                 break;
         }
+
+        notifyAll();
         // this.state = this.state + 1 >= RoomState.values().length ?
         // RoomState.values()[0] : this.state.ordinal + 1;
     }
+
+    /* ---------------------------- Room Own Methods ---------------------------- */
 
     public RoomState getRoomState() {
         return this.state;
