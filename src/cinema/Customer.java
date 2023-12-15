@@ -4,11 +4,13 @@ import tools.Pair;
 
 public class Customer extends Thread {
 
+    private String name;
     private BoxOffice boxOffice;
     private Room room;
-    // private Boolean movieSeen = false;
+    // private boolean movieSeen = false;
 
-    public Customer(BoxOffice boxOffice, Room room) {
+    public Customer(int index, BoxOffice boxOffice, Room room) {
+        this.name = "Customer " + index;
         this.boxOffice = boxOffice;
         this.room = room;
     }
@@ -16,15 +18,15 @@ public class Customer extends Thread {
     @Override
     public void run() {
         Pair<Integer, Integer> seat;
-        Boolean hasTicket = this.boxOffice.bookTicket();
+        boolean hasTicket = this.boxOffice.bookTicket();
 
-        // if (Boolean.FALSE.equals(this.hasTicket)) {
+        // if (boolean.FALSE.equals(this.hasTicket)) {
         // // If no ticket get back home
         // this.interrupt();
         // // return;
         // }
 
-        if (Boolean.TRUE.equals(hasTicket)) {
+        if (hasTicket) {
             /* ------------------------ Waiting the room to open ------------------------ */
 
             seat = this.room.stand(this);
@@ -38,5 +40,6 @@ public class Customer extends Thread {
         }
 
         // go back home.
+        // System.out.println(name + " is back home");
     }
 }

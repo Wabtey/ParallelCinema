@@ -21,19 +21,22 @@ public class Room {
 
     int index;
 
-    static final int NB_SEATS = 150;
+    private int NB_SEATS = 150;
     private int nRows;
     private int nSeatsPerRow;
     private int nAisles;
     private int[] aisleSeat;
-    private int nFreeSeats = NB_SEATS;
+    private int nFreeSeats;
+
+    private boolean animation;
 
     private volatile Customer[][] seatMap;
-    // Map<Integer, Boolean> seats = new HashMap<>();
+    // Map<Integer, boolean> seats = new HashMap<>();
 
     RoomState state = RoomState.CLOSED;
 
-    public Room(int index, int nRows, int nSeatsPerRow, int[] aisleSeat) {
+    public Room(int index, int nRows, int nSeatsPerRow, int[] aisleSeat, boolean animation) {
+        this.animation = animation;
         this.index = index;
 
         try {
@@ -71,7 +74,8 @@ public class Room {
             }
 
             // initializating counter of free seats
-            this.nFreeSeats = nRows * nSeatsPerRow;
+            this.NB_SEATS = nRows * nSeatsPerRow;
+            this.nFreeSeats = NB_SEATS;
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
@@ -81,8 +85,8 @@ public class Room {
     /**
      * Constructor 2 (loads a standard movie theather model)
      */
-    public Room(int index) {
-        this(index, 32, 6, new int[] { 3, 4 });
+    public Room(int index, boolean animation) {
+        this(index, 32, 6, new int[] { 3, 4 }, animation);
     }
 
     /* ---------------------------- Customers Methods --------------------------- */
@@ -90,7 +94,10 @@ public class Room {
     public synchronized Pair<Integer, Integer> stand(Customer stander) {
         Optional<Pair<Integer, Integer>> potentialFreeSeat = Optional.empty();
         while (potentialFreeSeat.isEmpty()) {
-            while (this.getRoomState() != RoomState.OPEN) {
+
+            // we can put them asleep without trouble
+            // as they will be waken up as soon the room's state changes
+            while (this.getRoomState() != RoomState.OPEN || this.isRoomFull()) {
                 try {
                     wait();
                 } catch (InterruptedException e) {
@@ -104,8 +111,19 @@ public class Room {
             for (int row = 0; row < this.seatMap.length; row++) {
                 for (int column = 0; column < this.seatMap[row].length; column++) {
                     if (this.seatMap[row][column] == null) {
+
+                        // to simulate the seating, the customer takes their time
+                        try {
+                            Thread.sleep(10);
+                        } catch (InterruptedException e) {
+                            Logger.getGlobal()
+                                    .warning("Customer " + stander.getName() + " sleep Interrupted (seating)!");
+                            Thread.currentThread().interrupt();
+                        }
+
                         this.seatMap[row][column] = stander;
                         potentialFreeSeat = Optional.of(new Pair<Integer, Integer>(row, column));
+                        nFreeSeats--;
                         break;
                     }
                 }
@@ -113,7 +131,8 @@ public class Room {
                     break;
             }
 
-            System.out.println(toString() + cleanString());
+            if (this.animation && potentialFreeSeat.isPresent())
+                System.out.println(toString() + cleanString());
         }
         return potentialFreeSeat.get();
     }
@@ -128,15 +147,45 @@ public class Room {
                 customer.interrupt();
             }
         }
+
+        // to simulate the seating, the customer takes their time
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            Logger.getGlobal()
+                    .warning("Customer " + customer.getName() + " sleep Interrupted (seating)!");
+            Thread.currentThread().interrupt();
+        }
         this.seatMap[seat.getLeft()][seat.getRight()] = null;
+        nFreeSeats++;
+
+        // if last make sure to wake the super worker :)
+        if (this.isRoomEmpty())
+            notify();
+
+        if (this.animation)
+            System.out.println(toString() + cleanString());
     }
 
     /* ------------------------- Super Employee Methods ------------------------- */
 
-    /* ---------------------------- Room Own Methods ---------------------------- */
+    public synchronized void clean(SuperWorker superWorker) {
+        if (!this.isRoomEmpty()) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                Logger.getGlobal()
+                        .warning("Super Worker got interruped in their sleep (waiting for cleaing).\n" + e.toString());
+                superWorker.interrupt();
+            }
+        }
+    }
 
-    public void nextRoomState() {
+    public synchronized void nextRoomState() {
         switch (state) {
+            case RoomState.CLOSED:
+                this.state = RoomState.OPEN;
+                break;
             case RoomState.OPEN:
                 this.state = RoomState.PROJECTING;
                 break;
@@ -152,9 +201,16 @@ public class Room {
             default:
                 break;
         }
+
+        if (this.animation)
+            System.out.println(toString() + cleanString());
+
+        notifyAll();
         // this.state = this.state + 1 >= RoomState.values().length ?
         // RoomState.values()[0] : this.state.ordinal + 1;
     }
+
+    /* ---------------------------- Room Own Methods ---------------------------- */
 
     public RoomState getRoomState() {
         return this.state;
@@ -186,6 +242,17 @@ public class Room {
         return this.nSeatsPerRow;
     }
 
+    /**
+     * @return the number of free seats in the room.
+     */
+    public int getNumberOfFreeSeats() {
+        return this.nFreeSeats;
+    }
+
+    public boolean isRoomEmpty() {
+        return this.nFreeSeats == this.NB_SEATS;
+    }
+
     /* ------------------------------ Display Room ------------------------------ */
 
     /**
@@ -206,6 +273,24 @@ public class Room {
      */
     public String toString() {
         StringBuilder print = new StringBuilder();
+
+        // Same length State visualizer
+        StringBuilder stateFormated = new StringBuilder().append(this.getRoomState().toString());
+        for (int i = this.getRoomState().toString().length() - 10; i < 10; i++)
+            stateFormated.append(" ");
+
+        // Same length # of free seats visualizer
+        StringBuilder nFreeSeatsFormated = new StringBuilder();
+        if (this.getNumberOfFreeSeats() < 10) {
+            nFreeSeatsFormated.append("  ");
+        } else if (this.getNumberOfFreeSeats() < 100) {
+            nFreeSeatsFormated.append(" ");
+        }
+        nFreeSeatsFormated.append(this.getNumberOfFreeSeats());
+
+        print.append("Room " + this.index + ": " + stateFormated.toString() + ", "
+                + nFreeSeatsFormated + "/" + this.NB_SEATS + "\n");
+        // print.append("Number of free seats: " + this.nFreeSeats + "\n");
 
         for (int i = 0; i < this.nRows; i++) {
             print.append("--");
