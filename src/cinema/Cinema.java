@@ -8,7 +8,7 @@ public class Cinema {
     public static final float AVERAGE_SALARY = 2000;
 
     public static final int NB_ROOMS = 1;
-    static final int NB_CUSTOMERS = 250;
+    static final int NB_CUSTOMERS = 400;
 
     private BoxOffice boxOffice = new BoxOffice();
     private Room[] rooms = new Room[NB_ROOMS];
@@ -48,6 +48,10 @@ public class Cinema {
 
         for (int i = 0; i < NB_ROOMS; i++)
             System.out.println(this.rooms[i].toString());
+
+        long unhappyCustomers = NB_CUSTOMERS < BoxOffice.MAX_TICKETS ? 0 : NB_CUSTOMERS - BoxOffice.MAX_TICKETS;
+        System.out.println("Tickets left: " + boxOffice.getTicketNumber() + "/" + BoxOffice.MAX_TICKETS
+                + ". Unhappy customers: " + unhappyCustomers);
 
         // There is no more customers at the cinema.
         // The employee being a Daemon, will stop itself being the only one left.

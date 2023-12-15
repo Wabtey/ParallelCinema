@@ -62,3 +62,5 @@ I solved this problem by creating a room method called `clean()`,
 the superWorker will be put to sleep and should be woken by the departure of the last client.
 
 We can limit the waiting by a simple combination `if` / `notify`
+
+I didn't represent the super-worker entering the room, but we can imagine it.
