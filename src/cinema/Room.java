@@ -257,7 +257,23 @@ public class Room {
     public String toString() {
         StringBuilder print = new StringBuilder();
 
-        print.append("Room's state: " + this.state + "\n");
+        // Same length State visualizer
+        StringBuilder stateFormated = new StringBuilder().append(this.getRoomState().toString());
+        for (int i = this.getRoomState().toString().length() - 10; i < 10; i++)
+            stateFormated.append(" ");
+
+        // Same length # of free seats visualizer
+        StringBuilder nFreeSeatsFormated = new StringBuilder();
+        if (this.getNumberOfFreeSeats() < 10) {
+            nFreeSeatsFormated.append("  ");
+        } else if (this.getNumberOfFreeSeats() < 100) {
+            nFreeSeatsFormated.append(" ");
+        }
+        nFreeSeatsFormated.append(this.getNumberOfFreeSeats());
+
+        print.append("Room " + this.index + ": " + stateFormated.toString() + ", "
+                + nFreeSeatsFormated + "/" + Room.NB_SEATS + "\n");
+        // print.append("Number of free seats: " + this.nFreeSeats + "\n");
 
         for (int i = 0; i < this.nRows; i++) {
             print.append("--");

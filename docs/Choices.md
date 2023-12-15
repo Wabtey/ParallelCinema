@@ -32,3 +32,11 @@ public void run() {
     }
 }
 ```
+
+## Room's life
+
+I thought like giving life to the room, which will switch state itself but for now we give fullpower to the `SuperWorker`.
+
+I put `nextRoomState()` on `synchronized` to ensure that everyone has the good room's state.
+
+Since [this commit](3e97d0b2bb07d47bca609b6d2b8a4029dbc7ed63) the numbering of Free seats was off.
