@@ -91,6 +91,12 @@ public class Room {
 
     /* ---------------------------- Customers Methods --------------------------- */
 
+    /**
+     * TODO: render - Make the customers choose the centerest seats
+     * 
+     * @param stander
+     * @return
+     */
     public synchronized Pair<Integer, Integer> stand(Customer stander) {
         Optional<Pair<Integer, Integer>> potentialFreeSeat = Optional.empty();
         while (potentialFreeSeat.isEmpty()) {
@@ -170,6 +176,7 @@ public class Room {
     /* ------------------------- Super Employee Methods ------------------------- */
 
     public synchronized void clean(SuperWorker superWorker) {
+        // as all the customers left, the only one waiting is the super-worker
         if (!this.isRoomEmpty()) {
             try {
                 wait();
