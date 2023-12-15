@@ -10,12 +10,12 @@ public class Cinema {
     public static final int NB_ROOMS = 1;
     static final int NB_CUSTOMERS = 200;
 
+    private BoxOffice boxOffice = new BoxOffice();
     private static Room[] rooms = new Room[NB_ROOMS];
     private Customer[] customers = new Customer[NB_CUSTOMERS];
     private SuperWorker superWorker;
 
     Cinema() {
-
         // --- Rooms ---
         for (int i = 0; i < NB_ROOMS; i++)
             rooms[i] = new Room(i);
@@ -26,7 +26,7 @@ public class Cinema {
             // NOTE: we could put them the film idea and and the superWorker tells them
             // where to go
             int roomChoosen = r.nextInt(NB_ROOMS);
-            customers[i] = new Customer(rooms[roomChoosen]);
+            customers[i] = new Customer(boxOffice, rooms[roomChoosen]);
             customers[i].start();
         }
 

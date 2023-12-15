@@ -92,10 +92,11 @@ public class Room {
         while (potentialFreeSeat.isEmpty()) {
             while (this.getRoomState() != RoomState.OPEN) {
                 try {
-                    stander.wait();
+                    wait();
                 } catch (InterruptedException e) {
                     Logger.getGlobal()
                             .warning(stander.getName() + " got interruped in their sleep.\n" + e.toString());
+                    stander.interrupt();
                 }
             }
 
@@ -120,10 +121,11 @@ public class Room {
     public synchronized void freeSeat(Customer customer, Pair<Integer, Integer> seat) {
         while (this.getRoomState() != RoomState.EXITING) {
             try {
-                customer.wait();
+                wait();
             } catch (InterruptedException e) {
                 Logger.getGlobal()
                         .warning(customer.getName() + " got interruped in their sleep.\n" + e.toString());
+                customer.interrupt();
             }
         }
         this.seatMap[seat.getLeft()][seat.getRight()] = null;

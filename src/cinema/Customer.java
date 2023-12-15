@@ -2,32 +2,45 @@ package cinema;
 
 import java.util.Optional;
 
-import cinema.Room.RoomState;
 import tools.Pair;
 
 public class Customer extends Thread {
 
+    BoxOffice boxOffice;
     Room room;
+    Boolean hasTicket;
     Optional<Pair<Integer, Integer>> potentialSeat = Optional.empty();
     Boolean movieSeen = false;
 
-    public Customer(Room room) {
+    public Customer(BoxOffice boxOffice, Room room) {
+        this.boxOffice = boxOffice;
         this.room = room;
     }
 
     @Override
     public void run() {
-        this.room.reserveTicket();
-        // If no ticket get back home
-        /* ------------------------ Waiting the room to open ------------------------ */
+        this.hasTicket = this.boxOffice.bookTicket();
 
-        this.potentialSeat = Optional.of(this.room.stand(this));
+        // if (Boolean.FALSE.equals(this.hasTicket)) {
+        // // If no ticket get back home
+        // this.interrupt();
+        // // return;
+        // }
 
-        /* ------------------------ Waiting the flim to start ----------------------- */
-        /* -------------------- Waiting the flim to finish Sadge -------------------- */
+        if (Boolean.TRUE.equals(this.hasTicket)) {
+            /* ------------------------ Waiting the room to open ------------------------ */
 
-        this.room.freeSeat(this, potentialSeat.get());
-        this.potentialSeat = Optional.empty();
-        this.movieSeen = true;
+            this.potentialSeat = Optional.of(this.room.stand(this));
+
+            /* ------------------------ Waiting the flim to start ----------------------- */
+            /* -------------------- Waiting the flim to finish Sadge -------------------- */
+
+            this.room.freeSeat(this, potentialSeat.get());
+            this.potentialSeat = Optional.empty();
+            this.movieSeen = true;
+
+        }
+
+        // go back home.
     }
 }
