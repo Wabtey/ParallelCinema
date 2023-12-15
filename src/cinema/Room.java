@@ -21,12 +21,12 @@ public class Room {
 
     int index;
 
-    static final int NB_SEATS = 150;
+    private int NB_SEATS = 150;
     private int nRows;
     private int nSeatsPerRow;
     private int nAisles;
     private int[] aisleSeat;
-    private int nFreeSeats = NB_SEATS;
+    private int nFreeSeats;
 
     private boolean animation;
 
@@ -74,7 +74,8 @@ public class Room {
             }
 
             // initializating counter of free seats
-            this.nFreeSeats = nRows * nSeatsPerRow;
+            this.NB_SEATS = nRows * nSeatsPerRow;
+            this.nFreeSeats = NB_SEATS;
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
@@ -233,7 +234,7 @@ public class Room {
     }
 
     public boolean isRoomEmpty() {
-        return this.nFreeSeats == Room.NB_SEATS;
+        return this.nFreeSeats == this.NB_SEATS;
     }
 
     /* ------------------------------ Display Room ------------------------------ */
@@ -272,7 +273,7 @@ public class Room {
         nFreeSeatsFormated.append(this.getNumberOfFreeSeats());
 
         print.append("Room " + this.index + ": " + stateFormated.toString() + ", "
-                + nFreeSeatsFormated + "/" + Room.NB_SEATS + "\n");
+                + nFreeSeatsFormated + "/" + this.NB_SEATS + "\n");
         // print.append("Number of free seats: " + this.nFreeSeats + "\n");
 
         for (int i = 0; i < this.nRows; i++) {
