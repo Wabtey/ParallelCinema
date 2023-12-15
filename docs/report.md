@@ -1,4 +1,4 @@
-# Cinema
+# Cinema by Florian EPAIN
 
 ## Tutorial
 
@@ -6,14 +6,14 @@ To run the project, run the function `main` in the `Cinema.java` file with "anim
 
 ## Overview
 
-`Customer` and `SuperWorker` are `Threads`. `Room` is the shared object.
+I decided to concept this solution using the java monitor.
+`Customer` and `SuperWorker` are `Thread`s. `Room` is the shared object.
 
 ## Objects
 
 ### Cinema
 
-I've paved the way for several cinema's rooms, but in this release only one will be used.
-In the
+I've paved the way for several cinema's rooms, but in the test setup (`main` function) only one is used.
 
 ### Customer
 
@@ -22,14 +22,14 @@ First I wanted to represent the customers path like that
 ```java
 @Override
 public void run() {
-    while (movieSeen) {
-        /* ------------------------ Waiting the room to open ------------------------ */
+    while (this.movieSeen) {
+        /* ----------------- Waiting the room to open ----------------- */
         while (room.getRoomState() != RoomState.OPEN) {
         }
 
         if (this.potentialSeat.isEmpty() && room.getRoomState() == RoomState.OPEN)
             this.potentialSeat = this.room.stand(this);
-        /* ------------------------ Waiting the flim to start ----------------------- */
+        /* ----------------- Waiting the flim to start ----------------- */
         while (room.getRoomState() != RoomState.PROJECTING) {
         }
 
@@ -37,7 +37,7 @@ public void run() {
             // Appreciate the flim
         }
 
-        /* -------------------- Waiting the flim to finish Sadge -------------------- */
+        /* -------------- Waiting the flim to finish Sadge ------------- */
         while (room.getRoomState() != RoomState.EXITING) {
         }
 
@@ -47,12 +47,17 @@ public void run() {
             this.movieSeen = true;
         }
     }
-}
+} // in `Customer.java`
 ```
 
-But the customers now are stubborn and will try endlessly to take a seat if they have a ticket, and will try to leave instantly. But they will be stopped by a room's state check.
+But the customers now are stubborn and will try endlessly to take a seat if they have a ticket, and will try to leave instantly.
+But they will be stopped by a room's state check.
+They will be woken up by the super-worker in the changing room's state by a `notifyAll()`.
+We ensure that their wake-up is valid with a while loop.
 
 ### Super-Worker
+
+The super-worker is in an infinite loop (`while (true)`) and will be interrupted when all other threads (except the main thread) are stopped.
 
 I didn't represent the super-worker entering the room, but we can imagine it.
 
@@ -64,22 +69,33 @@ I put `nextRoomState()` on `synchronized` to ensure that everyone has the good r
 
 ## Problems
 
-The super-worker won't clean the room, even if everyone has left, in this configuration:
+- The super-worker won't clean the room, even if everyone has left, in this configuration:
 
-```java
-/* ------------------------------ Exiting Phase ----------------------------- */
-this.rooms[0].nextRoomState();
+    ```java
+    @Override
+    public void run() {
+        // ...
+        
+        /* ---------------------- Exiting Phase ---------------------- */
+        this.rooms[0].nextRoomState();
 
-while (!this.rooms[0].isRoomEmpty()) {
-    // System.out.println("still waiting...");
-}
+        while (!this.rooms[0].isRoomEmpty()) {
+            // System.out.println("still waiting...");
+        }
 
-/* ----------------------------- Cleaning Phase ----------------------------- */
-this.rooms[0].nextRoomState();
-```
+        /* ---------------------- Cleaning Phase --------------------- */
+        this.rooms[0].nextRoomState();
 
-Surprisingly, when I uncomment the debug message in the while loop, the blocking disappears.
-I solved this problem by creating a room method called `clean()`,
-the `SuperWorker` will be put to sleep and should be woken by the departure of the last client.
+        // ...
+    } // In `SuperWorker.java`
+    ```
 
-We can limit the complexity by a simple combination `if` / `notify`, as the only one waiting will be the super-worker.
+    Surprisingly, when I uncomment the debug message in the while loop, the blocking disappears.
+
+    I solved this problem by creating a room method called `clean()`,
+    the `SuperWorker` will be put to sleep and should be woken by the departure of the last client.
+    We can limit the complexity by a simple combination `if` / `notify`, as the only one waiting will be the super-worker.
+
+## Notes
+
+We also checked that the code was free of deadlocks after removing the simulation sleep (when the clients moved around the cinema).
