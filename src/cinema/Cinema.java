@@ -62,7 +62,7 @@ public class Cinema {
         boolean animation = args != null && args.length > 0 && args[0] != null && args[0].equals("animation");
         long start = System.currentTimeMillis();
 
-        Cinema cinema = new Cinema(animation);
+        new Cinema(animation);
 
         long finish = System.currentTimeMillis();
         float timeElapsed = finish - start;

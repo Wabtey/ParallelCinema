@@ -1,5 +1,7 @@
 # Docs
 
+To run the project, run the function `main` in the `Cinema.java` file with "animation" as argument.
+
 First I wanted to represent the customers path like that
 
 ```java
