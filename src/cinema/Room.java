@@ -93,6 +93,7 @@ public class Room {
 
     /**
      * TODO: render - Make the customers choose the centerest seats
+     * ^-- Use a polar function: spiral log r=a^teta, a=1.15, 0<=teta<=12Pi
      * 
      * @param stander
      * @return
