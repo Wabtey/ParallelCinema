@@ -22,8 +22,8 @@ public class Room {
     int index;
 
     private int nbSeats;
-    private int nRows;
-    private int nSeatsPerRow;
+    private int nColumns;
+    private int nSeatsPerColumn;
     private int nAisles;
     private int[] aisleSeat;
     private int nFreeSeats;
@@ -35,7 +35,7 @@ public class Room {
 
     RoomState state = RoomState.CLOSED;
 
-    public Room(int index, int nRows, int nSeatsPerRow, int[] aisleSeat, boolean animation) {
+    public Room(int index, boolean animation, int nColumns, int nSeatsPerColumn, int[] aisleSeat) {
         this.animation = animation;
         this.index = index;
 
@@ -43,14 +43,14 @@ public class Room {
             // TODO: Define specific Exceptions
 
             // number of rows
-            if (nRows < 3)
-                throw new Exception("Room: the room needs at least 3 rows!");
-            this.nRows = nRows;
+            if (nColumns < 3)
+                throw new Exception("Room: the room needs at least 3 column!");
+            this.nColumns = nColumns;
 
             // number of seats per row
-            if (nSeatsPerRow < 2)
-                throw new Exception("Room: the room needs to have at least 2 seats per row!");
-            this.nSeatsPerRow = nSeatsPerRow;
+            if (nSeatsPerColumn < 2)
+                throw new Exception("Room: the room needs to have at least 2 seats per column!");
+            this.nSeatsPerColumn = nSeatsPerColumn;
 
             // number of aisles (from 1 aisle, there are 2 corresponding seats
             if (aisleSeat.length < 2)
@@ -66,15 +66,15 @@ public class Room {
             }
 
             // seat map (null Customer)
-            this.seatMap = new Customer[nRows][nSeatsPerRow];
-            for (int i = 0; i < nRows; i++) {
-                for (int j = 0; j < nSeatsPerRow; j++) {
+            this.seatMap = new Customer[nColumns][nSeatsPerColumn];
+            for (int i = 0; i < nColumns; i++) {
+                for (int j = 0; j < nSeatsPerColumn; j++) {
                     this.seatMap[i][j] = null;
                 }
             }
 
             // initializating counter of free seats
-            this.nbSeats = nRows * nSeatsPerRow;
+            this.nbSeats = nColumns * nSeatsPerColumn;
             this.nFreeSeats = this.nbSeats;
         } catch (Exception e) {
             e.printStackTrace();
@@ -86,7 +86,7 @@ public class Room {
      * Constructor 2 (loads a standard movie theather model)
      */
     public Room(int index, boolean animation) {
-        this(index, 32, 6, new int[] { 3, 4 }, animation);
+        this(index, animation, 32, 6, new int[] { 3, 4 });
     }
 
     /* ---------------------------- Customers Methods --------------------------- */
@@ -239,12 +239,12 @@ public class Room {
      * Resetting an empty room
      */
     public void reset() {
-        for (int i = 0; i < this.nRows; i++) {
-            for (int j = 0; j < this.nSeatsPerRow; j++) {
+        for (int i = 0; i < this.nColumns; i++) {
+            for (int j = 0; j < this.nSeatsPerColumn; j++) {
                 this.seatMap[i][j] = null;
             }
         }
-        this.nFreeSeats = this.nRows * this.nSeatsPerRow;
+        this.nFreeSeats = this.nColumns * this.nSeatsPerColumn;
     }
 
     /**
@@ -255,10 +255,10 @@ public class Room {
     }
 
     /**
-     * Get the Number of Seats per Row
+     * Get the Number of Seats per Column
      */
-    public int getSeatsPerRow() {
-        return this.nSeatsPerRow;
+    public int getSeatsPerColumn() {
+        return this.nSeatsPerColumn;
     }
 
     /**
@@ -281,7 +281,7 @@ public class Room {
      */
     public String cleanString() {
         StringBuilder print = new StringBuilder();
-        for (int i = 0; i < 4 + this.getSeatsPerRow() + this.nAisles / 2; i++)
+        for (int i = 0; i < 4 + this.getSeatsPerColumn() + this.nAisles / 2; i++)
             print.append("\033[F");
         print.append("\r");
         return print.toString();
@@ -309,22 +309,22 @@ public class Room {
                 + nFreeSeatsFormated + "/" + this.nbSeats + "\n");
         // print.append("Number of free seats: " + this.nFreeSeats + "\n");
 
-        for (int i = 0; i < this.nRows; i++) {
+        for (int i = 0; i < this.nColumns; i++) {
             print.append("--");
         }
         print.append("-\n");
 
         int aisle = 0;
-        for (int j = 0; j < this.nSeatsPerRow; j++) {
+        for (int j = 0; j < this.nSeatsPerColumn; j++) {
             if (aisle < this.nAisles - 1 && (this.aisleSeat[aisle] == j && this.aisleSeat[aisle + 1] == j + 1)) {
-                for (int k = 0; k < this.nRows; k++)
+                for (int k = 0; k < this.nColumns; k++)
                     print.append("--");
                 print.append("-\n");
                 aisle = aisle + 2;
 
             }
 
-            for (int i = 0; i < this.nRows; i++) {
+            for (int i = 0; i < this.nColumns; i++) {
                 if (this.seatMap[i][j] == null) {
                     print.append(" \033[1mx\033[0m");
                 } else {
@@ -336,7 +336,7 @@ public class Room {
             print.append("\n");
         }
 
-        for (int i = 0; i < this.nRows; i++) {
+        for (int i = 0; i < this.nColumns; i++) {
             print.append("--");
         }
         print.append("-\n");
